@@ -1,0 +1,12 @@
+# Node modules
+/node_modules
+
+# Mac
+.DS_Store
+
+# Development
+*.xml
+/iTunes Library
+
+# Babel
+lib
