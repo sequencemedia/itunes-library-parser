@@ -14,7 +14,7 @@
 		<xsl:value-of select="translate(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', '')" />
 	</xsl:function>
 
-	<xsl:function name="seq:get-album-path">
+	<xsl:function name="seq:get-href-for-album">
 		<xsl:param name="albumArtist" />
 		<xsl:param name="album" />
 
@@ -28,7 +28,7 @@
 		<xsl:text>.m3u8</xsl:text>
 	</xsl:function>
 
-	<xsl:function name="seq:get-album-path">
+	<xsl:function name="seq:get-href-for-album">
 		<xsl:param name="album" />
 
 		<xsl:variable name="fileName" select="seq:normalize-for-path($album)" />
@@ -63,7 +63,7 @@
 				</xsl:choose>
 			</xsl:variable>
 
-			<xsl:result-document href="{seq:get-album-path($albumArtist, current-grouping-key())}" method="text">
+			<xsl:result-document href="{seq:get-href-for-album($albumArtist, current-grouping-key())}" method="text">
 				<xsl:call-template name="album">
 					<xsl:with-param name="current-group" select="current-group()" />
 				</xsl:call-template>
@@ -81,7 +81,7 @@
 			]">
 			<xsl:sort select="current-grouping-key()" />
 
-			<xsl:result-document href="{seq:get-album-path(current-grouping-key())}" method="text">
+			<xsl:result-document href="{seq:get-href-for-album(current-grouping-key())}" method="text">
 				<xsl:call-template name="album">
 					<xsl:with-param name="current-group" select="current-group()" />
 				</xsl:call-template>

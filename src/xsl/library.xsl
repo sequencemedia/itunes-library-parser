@@ -4,9 +4,8 @@
 	exclude-result-prefixes="xsl">
 	<xsl:output encoding="UTF-8" method="text" omit-xml-declaration="yes" indent="no" />
 
-	<xsl:import href="tracks.xsl" />
-
-	<xsl:import href="playlists.xsl" />
+	<xsl:import href="library/tracks.xsl" />
+	<xsl:import href="library/playlists.xsl" />
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="plist/dict/key[. = 'Tracks']" />

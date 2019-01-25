@@ -31,7 +31,7 @@
 		<xsl:value-of select="seq:normalize-for-path($name)" />
 	</xsl:function>
 
-	<xsl:function name="seq:get-playlist-path">
+	<xsl:function name="seq:get-href-for-playlist">
 		<xsl:param name="parentId" />
 		<xsl:param name="name" />
 		<xsl:param name="position" />
@@ -64,10 +64,10 @@
 		<xsl:text>.m3u8</xsl:text>
 	</xsl:function>
 
-	<xsl:function name="seq:get-playlist-path">
+	<xsl:function name="seq:get-href-for-playlist">
 		<xsl:param name="parentId" />
 		<xsl:param name="name" />
-		<xsl:value-of select="seq:get-playlist-path($parentId, $name, 0)" />
+		<xsl:value-of select="seq:get-href-for-playlist($parentId, $name, 0)" />
 	</xsl:function>
 
 	<xsl:template match="key[. = 'Playlists']">
@@ -97,14 +97,14 @@
 
 					<xsl:for-each select="$instances">
 						<xsl:if test=". = $playlist">
-							<xsl:result-document href="{seq:get-playlist-path($parentId, $name, position())}" method="text">
+							<xsl:result-document href="{seq:get-href-for-playlist($parentId, $name, position())}" method="text">
 								<xsl:apply-templates mode="playlist" select="array" />
 							</xsl:result-document>
 						</xsl:if>
 					</xsl:for-each>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:result-document href="{seq:get-playlist-path($parentId, $name)}" method="text">
+					<xsl:result-document href="{seq:get-href-for-playlist($parentId, $name)}" method="text">
 						<xsl:apply-templates mode="playlist" select="array" />
 					</xsl:result-document>
 				</xsl:otherwise>
@@ -112,6 +112,7 @@
 		</xsl:for-each>
 	</xsl:template>
 
+	<!-- Playlist: #EXTM3U -->
 	<xsl:template mode="playlist" match="array">
 		<xsl:text>#EXTM3U</xsl:text>
 		<xsl:text>&#13;</xsl:text>
@@ -122,6 +123,7 @@
 		</xsl:for-each>
 	</xsl:template>
 
+	<!-- Playlist track: #EXTINF -->
 	<xsl:template mode="playlist-track" match="dict">
 		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::integer[1]) div 1000)" />
 		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::string[1]/text())" />
