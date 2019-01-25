@@ -8,5 +8,8 @@
 *.xml
 /iTunes Library
 
+# Execution
+bin
+
 # Babel
 lib

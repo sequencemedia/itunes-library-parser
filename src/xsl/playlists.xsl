@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:seq="http://sequencemedia.net">
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:seq="http://sequencemedia.net"
+	xmlns:url-decoder="java:java.net.URLDecoder"
+	exclude-result-prefixes="xsl seq url-decoder">
 	<xsl:output encoding="UTF-8" method="text" omit-xml-declaration="yes" indent="no" />
 
 	<xsl:variable name="tracks" select="/plist/dict/key[. = 'Tracks']/following-sibling::dict" />
 	<xsl:variable name="playlists" select="/plist/dict/key[. = 'Playlists']/following-sibling::array/dict" />
+
+	<xsl:function name="seq:normalize-for-path">
+		<xsl:param name="s" />
+
+		<xsl:value-of select="translate(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', '')" />
+	</xsl:function>
 
 	<xsl:function name="seq:get-file-path">
 		<xsl:param name="playlist" />
@@ -21,7 +29,7 @@
 		</xsl:if>
 
 		<!-- to do: normalise -->
-		<xsl:value-of select="normalize-unicode($name, 'NFKD')" />
+		<xsl:value-of select="seq:normalize-for-path($name)" />
 	</xsl:function>
 
 	<xsl:function name="seq:get-playlist-path">
@@ -37,7 +45,7 @@
 			</xsl:if>
 		</xsl:variable>
 
-		<xsl:variable name="fileName" select="normalize-unicode($name, 'NFKD')" />
+		<xsl:variable name="fileName" select="seq:normalize-for-path($name)" />
 
 		<xsl:text>iTunes Library/Playlists/</xsl:text>
 
@@ -117,7 +125,7 @@
 
 	<xsl:template mode="playlist-track" match="dict">
 		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::integer[1]) div 1000)" />
-		<xsl:variable name="location" select="key[. = 'Location']/following-sibling::string[1]/text()" />
+		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::string[1]/text())" />
 
 		<xsl:text>#EXTINF:</xsl:text>
 		<xsl:choose>
