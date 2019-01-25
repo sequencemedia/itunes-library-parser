@@ -41,7 +41,6 @@
 	</xsl:function>
 
 	<xsl:template match="key[. = 'Tracks']">
-
 		<!-- Albums -->
 		<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::string[1]/text()" select="following-sibling::dict[1]/dict[
 				key[. = 'Track Type']/following-sibling::string[1]/text() = 'File' and
@@ -51,7 +50,7 @@
 				key[. = 'Disc Number'] and
 				key[. = 'Track Number']
 			]">
-			<xsl:sort select="key[. = 'Album']/following-sibling::string[1]/text()" />
+			<xsl:sort select="current-grouping-key()" />
 
 			<xsl:variable name="albumArtist">
 				<xsl:choose>
@@ -80,7 +79,7 @@
 				key[. = 'Disc Number'] and
 				key[. = 'Track Number']
 			]">
-			<xsl:sort select="key[. = 'Album']/following-sibling::string[1]/text()" />
+			<xsl:sort select="current-grouping-key()" />
 
 			<xsl:result-document href="{seq:get-album-path(current-grouping-key())}" method="text">
 				<xsl:call-template name="album">

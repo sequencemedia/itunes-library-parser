@@ -28,7 +28,6 @@
 			<xsl:text>/</xsl:text>
 		</xsl:if>
 
-		<!-- to do: normalise -->
 		<xsl:value-of select="seq:normalize-for-path($name)" />
 	</xsl:function>
 
@@ -58,7 +57,7 @@
 
 		<xsl:if test="number($position)">
 			<xsl:text>&#32;(</xsl:text>
-			<xsl:value-of select="number($position)" />
+			<xsl:value-of select="$position" />
 			<xsl:text>)</xsl:text>
 		</xsl:if>
 

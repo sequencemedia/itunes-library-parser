@@ -1,3 +1,5 @@
 require('@babel/register')
 
-module.exports = require('./src')
+console.log(JSON.stringify(require('./iTunes Library.json'), null, ' '))
+
+module.exports = require('./src/js')
