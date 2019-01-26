@@ -42,13 +42,16 @@
 
 	<xsl:template match="key[. = 'Tracks']">
 		<!-- Albums -->
-		<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::string[1]/text()" select="following-sibling::dict[1]/dict[
+		<xsl:for-each-group
+			group-by="key[. = 'Album']/following-sibling::string[1]/text()"
+			select="following-sibling::dict[1]/dict[
 				key[. = 'Track Type']/following-sibling::string[1]/text() = 'File' and
-				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
-				not(local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true') and
 				key[. = 'Album'] and
-				key[. = 'Disc Number'] and
-				key[. = 'Track Number']
+				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
+				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) = 'true') and
+				(
+					not(key[. = 'Compilation']) or not(local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true')
+				)
 			]">
 			<xsl:sort select="current-grouping-key()" />
 
@@ -71,13 +74,17 @@
 		</xsl:for-each-group>
 
 		<!-- Compilation albums -->
-		<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::string[1]/text()" select="following-sibling::dict[1]/dict[
+		<xsl:for-each-group
+			group-by="key[. = 'Album']/following-sibling::string[1]/text()"
+			select="following-sibling::dict[1]/dict[
 				key[. = 'Track Type']/following-sibling::string[1]/text() = 'File' and
-				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
-				local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true' and
 				key[. = 'Album'] and
-				key[. = 'Disc Number'] and
-				key[. = 'Track Number']
+				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
+				string-length(key[. = 'Artist']/following-sibling::string[1]/text()) and
+				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) = 'true') and
+				(
+					key[. = 'Compilation'] and local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true'
+				)
 			]">
 			<xsl:sort select="current-grouping-key()" />
 
