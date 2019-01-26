@@ -12,18 +12,20 @@
 	<xsl:function name="seq:normalize-for-path">
 		<xsl:param name="s" />
 
-		<xsl:value-of select="translate(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', '')" />
+		<xsl:value-of
+			select="normalize-space(translate(translate(replace(normalize-unicode($s, 'NFD'), '[&quot;%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', ''))"
+		/>
 	</xsl:function>
 
 	<xsl:function name="seq:get-file-path">
 		<xsl:param name="playlist" />
 
-		<xsl:variable name="parentId" select="$playlist/key[. = 'Parent Persistent ID']/following-sibling::string[1]/text()" />
-		<xsl:variable name="name" select="$playlist/key[. = 'Name']/following-sibling::string[1]/text()" />
+		<xsl:variable name="parentId" select="$playlist/key[. = 'Parent Persistent ID']/following-sibling::*[1]/text()" />
+		<xsl:variable name="name" select="$playlist/key[. = 'Name']/following-sibling::*[1]/text()" />
 
 		<xsl:if test="string-length($parentId)">
 			<xsl:value-of select="seq:get-file-path($playlists[
-				key[. = 'Playlist Persistent ID']/following-sibling::string[1]/text() = $parentId
+				key[. = 'Playlist Persistent ID']/following-sibling::*[1]/text() eq $parentId
 			])" />
 			<xsl:text>/</xsl:text>
 		</xsl:if>
@@ -39,7 +41,7 @@
 		<xsl:variable name="filePath">
 			<xsl:if test="string-length($parentId)">
 				<xsl:value-of select="seq:get-file-path($playlists[
-					key[. = 'Playlist Persistent ID']/following-sibling::string[1]/text() = $parentId
+					key[. = 'Playlist Persistent ID']/following-sibling::*[1]/text() eq $parentId
 				])" />
 			</xsl:if>
 		</xsl:variable>
@@ -78,17 +80,17 @@
 				key[. = 'Playlist Items']/following-sibling::array[1]/* and
 				not(key[. = 'Distinguished Kind']) and
 				not(key[. = 'Smart Info']) and
-				not(local-name(key[. = 'Folder']/following-sibling::*[1]) = 'true') and
-				not(local-name(key[. = 'Visible']/following-sibling::*[1]) = 'false')
+				not(local-name(key[. = 'Folder']/following-sibling::*[1]) eq 'true') and
+				not(local-name(key[. = 'Visible']/following-sibling::*[1]) eq 'false')
 			]"
 		/>
 
 		<xsl:for-each select="$playlists">
-			<xsl:variable name="parentId" select="key[. = 'Parent Persistent ID']/following-sibling::string[1]/text()" />
-			<xsl:variable name="name" select="key[. = 'Name']/following-sibling::string[1]/text()" />
+			<xsl:variable name="parentId" select="key[. = 'Parent Persistent ID']/following-sibling::*[1]/text()" />
+			<xsl:variable name="name" select="key[. = 'Name']/following-sibling::*[1]/text()" />
 
 			<xsl:variable name="instances" select="$playlists[
-				key[. = 'Parent Persistent ID']/following-sibling::string[1]/text() = $parentId and key[. = 'Name']/following-sibling::string[1]/text() = $name
+				key[. = 'Parent Persistent ID']/following-sibling::*[1]/text() eq $parentId and key[. = 'Name']/following-sibling::*[1]/text() eq $name
 			]" />
 
 			<xsl:choose>
@@ -118,15 +120,15 @@
 		<xsl:text>&#13;</xsl:text>
 
 		<xsl:for-each select="dict/key[. = 'Track ID']">
-			<xsl:variable name="trackId" select="following-sibling::integer[1]" />
+			<xsl:variable name="trackId" select="following-sibling::*[1]/text()" />
 			<xsl:apply-templates mode="playlist-track" select="$tracks[1]/key[. = $trackId]/following-sibling::dict[1]" />
 		</xsl:for-each>
 	</xsl:template>
 
 	<!-- Playlist track: #EXTINF -->
 	<xsl:template mode="playlist-track" match="dict">
-		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::integer[1]) div 1000)" />
-		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::string[1]/text())" />
+		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::*[1]/text()) div 1000)" />
+		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::*[1]/text())" />
 
 		<xsl:text>#EXTINF:</xsl:text>
 		<xsl:choose>
@@ -138,9 +140,9 @@
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="key[. = 'Album']/following-sibling::string[1]" />
+		<xsl:value-of select="normalize-space(key[. = 'Name']/following-sibling::*[1]/text())" />
 		<xsl:text>&#32;-&#32;</xsl:text>
-		<xsl:value-of select="key[. = 'Name']/following-sibling::string[1]" />
+		<xsl:value-of select="normalize-space(key[. = 'Artist']/following-sibling::*[1]/text())" />
 		<xsl:text>&#13;</xsl:text>
 		<xsl:choose>
 			<xsl:when test="starts-with($location, 'file://')">

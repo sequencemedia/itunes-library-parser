@@ -11,7 +11,9 @@
 	<xsl:function name="seq:normalize-for-path">
 		<xsl:param name="s" />
 
-		<xsl:value-of select="translate(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', '')" />
+		<xsl:value-of
+			select="normalize-space(translate(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', ''))"
+		/>
 	</xsl:function>
 
 	<xsl:function name="seq:get-href-for-album">
@@ -41,48 +43,74 @@
 	</xsl:function>
 
 	<xsl:template match="key[. = 'Tracks']">
-		<!-- Albums -->
+		<!-- Albums: 'Album Artist' -->
 		<xsl:for-each-group
-			group-by="key[. = 'Album']/following-sibling::string[1]/text()"
+			group-by="key[. = 'Album Artist']/following-sibling::*[1]/text()"
 			select="following-sibling::dict[1]/dict[
-				key[. = 'Track Type']/following-sibling::string[1]/text() = 'File' and
+				key[. = 'Album Artist']/following-sibling::*[1]/text() and
+				key[. = 'Track Type']/following-sibling::*[1]/text() eq 'File' and
 				key[. = 'Album'] and
-				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
-				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) = 'true') and
+				contains(lower-case(key[. = 'Kind']/following-sibling::*[1]/text()), 'audio') and
+				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) eq 'true') and
 				(
-					not(key[. = 'Compilation']) or not(local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true')
+					not(key[. = 'Compilation']) or not(local-name(key[. = 'Compilation']/following-sibling::*[1]) eq 'true')
 				)
 			]">
 			<xsl:sort select="current-grouping-key()" />
 
-			<xsl:variable name="albumArtist">
-				<xsl:choose>
-					<xsl:when test="key[. = 'Album Artist']/following-sibling::string[1]/text()">
-						<xsl:value-of select="key[. = 'Album Artist']/following-sibling::string[1]/text()" />
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="key[. = 'Artist']/following-sibling::string[1]/text()" />
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable>
+			<xsl:variable name="albumArtist" select="current-grouping-key()" />
 
-			<xsl:result-document href="{seq:get-href-for-album($albumArtist, current-grouping-key())}" method="text">
-				<xsl:call-template name="album">
-					<xsl:with-param name="current-group" select="current-group()" />
-				</xsl:call-template>
-			</xsl:result-document>
+			<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::*[1]/text()" select="current-group()">
+				<xsl:sort select="current-grouping-key()" />
+
+				<xsl:result-document href="{seq:get-href-for-album($albumArtist, current-grouping-key())}" method="text">
+					<xsl:call-template name="album">
+						<xsl:with-param name="current-group" select="current-group()" />
+					</xsl:call-template>
+				</xsl:result-document>
+			</xsl:for-each-group>
+		</xsl:for-each-group>
+
+		<!-- Albums: 'Artist' not 'Album Artist' -->
+		<xsl:for-each-group
+			group-by="key[. = 'Artist']/following-sibling::*[1]/text()"
+			select="following-sibling::dict[1]/dict[
+				(
+					not(key[. = 'Album Artist']/following-sibling::*[1]/text())
+				) and
+				key[. = 'Track Type']/following-sibling::*[1]/text() eq 'File' and
+				key[. = 'Album'] and
+				contains(lower-case(key[. = 'Kind']/following-sibling::*[1]/text()), 'audio') and
+				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) eq 'true') and
+				(
+					not(key[. = 'Compilation']) or not(local-name(key[. = 'Compilation']/following-sibling::*[1]) eq 'true')
+				)
+			]">
+			<xsl:sort select="current-grouping-key()" />
+
+			<xsl:variable name="artist" select="current-grouping-key()" />
+
+			<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::*[1]/text()" select="current-group()">
+				<xsl:sort select="current-grouping-key()" />
+
+				<xsl:result-document href="{seq:get-href-for-album($artist, current-grouping-key())}" method="text">
+					<xsl:call-template name="album">
+						<xsl:with-param name="current-group" select="current-group()" />
+					</xsl:call-template>
+				</xsl:result-document>
+			</xsl:for-each-group>
 		</xsl:for-each-group>
 
 		<!-- Compilation albums -->
 		<xsl:for-each-group
-			group-by="key[. = 'Album']/following-sibling::string[1]/text()"
+			group-by="key[. = 'Album']/following-sibling::*[1]/text()"
 			select="following-sibling::dict[1]/dict[
-				key[. = 'Track Type']/following-sibling::string[1]/text() = 'File' and
+				key[. = 'Track Type']/following-sibling::*[1]/text() eq 'File' and
 				key[. = 'Album'] and
-				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
-				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) = 'true') and
+				contains(lower-case(key[. = 'Kind']/following-sibling::*[1]/text()), 'audio') and
+				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) eq 'true') and
 				(
-					key[. = 'Compilation'] and local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true'
+					key[. = 'Compilation'] and local-name(key[. = 'Compilation']/following-sibling::*[1]) eq 'true'
 				)
 			]">
 			<xsl:sort select="current-grouping-key()" />
@@ -103,8 +131,8 @@
 		<xsl:text>&#13;</xsl:text>
 
 		<xsl:for-each select="$current-group">
-			<xsl:sort select="number(key[. = 'Disc Number']/following-sibling::integer[1]/text())" />
-			<xsl:sort select="number(key[. = 'Track Number']/following-sibling::integer[1]/text())" />
+			<xsl:sort select="number(key[. = 'Disc Number']/following-sibling::*[1]/text())" />
+			<xsl:sort select="number(key[. = 'Track Number']/following-sibling::*[1]/text())" />
 
 			<xsl:apply-templates mode="album-track" select="." />
 		</xsl:for-each>
@@ -112,8 +140,8 @@
 
 	<!-- Album track: #EXTINF -->
 	<xsl:template mode="album-track" match="dict">
-		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::integer[1]) div 1000)" />
-		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::string[1]/text())" />
+		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::*[1]/text()) div 1000)" />
+		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::*[1]/text())" />
 
 		<xsl:text>#EXTINF:</xsl:text>
 		<xsl:choose>
@@ -125,9 +153,9 @@
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="key[. = 'Name']/following-sibling::string[1]/text()" />
+		<xsl:value-of select="normalize-space(key[. = 'Name']/following-sibling::*[1]/text())" />
 		<xsl:text>&#32;-&#32;</xsl:text>
-		<xsl:value-of select="key[. = 'Artist']/following-sibling::string[1]/text()" />
+		<xsl:value-of select="normalize-space(key[. = 'Artist']/following-sibling::*[1]/text())" />
 		<xsl:text>&#13;</xsl:text>
 
 		<xsl:choose>
