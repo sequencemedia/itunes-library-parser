@@ -80,7 +80,6 @@
 				key[. = 'Track Type']/following-sibling::string[1]/text() = 'File' and
 				key[. = 'Album'] and
 				contains(lower-case(key[. = 'Kind']/following-sibling::string[1]/text()), 'audio') and
-				string-length(key[. = 'Artist']/following-sibling::string[1]/text()) and
 				not(local-name(key[. = 'Podcast']/following-sibling::*[1]) = 'true') and
 				(
 					key[. = 'Compilation'] and local-name(key[. = 'Compilation']/following-sibling::*[1]) = 'true'
