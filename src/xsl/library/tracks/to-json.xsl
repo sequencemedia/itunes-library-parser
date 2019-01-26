@@ -4,11 +4,13 @@
 	exclude-result-prefixes="xsl">
 	<xsl:output encoding="UTF-8" method="text" omit-xml-declaration="yes" indent="no" />
 
-	<xsl:import href="../to-json.xsl" />
+	<xsl:import href="../../to-json.xsl" />
 
 	<xsl:template match="/">
-		<xsl:result-document href="iTunes Library.json" method="text">
-			<xsl:apply-templates select="plist/dict" />
+		<xsl:result-document href="iTunes Library/Tracks.json" method="text">
+			<xsl:text>{</xsl:text>
+			<xsl:apply-templates select="plist/dict/key[. = 'Tracks']" />
+			<xsl:text>}</xsl:text>
 		</xsl:result-document>
 	</xsl:template>
 </xsl:stylesheet>
