@@ -128,7 +128,7 @@
 	<!-- Playlist track: #EXTINF -->
 	<xsl:template mode="playlist-track" match="dict">
 		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::*[1]/text()) div 1000)" />
-		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::*[1]/text())" />
+		<xsl:variable name="location" select="url-decoder:decode(replace(key[. = 'Location']/following-sibling::*[1]/text(), '[&#43;]', '%2b'))" />
 
 		<xsl:text>#EXTINF:</xsl:text>
 		<xsl:choose>

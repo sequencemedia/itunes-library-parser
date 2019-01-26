@@ -56,13 +56,9 @@
 					not(key[. = 'Compilation']) or not(local-name(key[. = 'Compilation']/following-sibling::*[1]) eq 'true')
 				)
 			]">
-			<xsl:sort select="current-grouping-key()" />
-
 			<xsl:variable name="albumArtist" select="current-grouping-key()" />
 
 			<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::*[1]/text()" select="current-group()">
-				<xsl:sort select="current-grouping-key()" />
-
 				<xsl:result-document href="{seq:get-href-for-album($albumArtist, current-grouping-key())}" method="text">
 					<xsl:call-template name="album">
 						<xsl:with-param name="current-group" select="current-group()" />
@@ -86,13 +82,9 @@
 					not(key[. = 'Compilation']) or not(local-name(key[. = 'Compilation']/following-sibling::*[1]) eq 'true')
 				)
 			]">
-			<xsl:sort select="current-grouping-key()" />
-
 			<xsl:variable name="artist" select="current-grouping-key()" />
 
 			<xsl:for-each-group group-by="key[. = 'Album']/following-sibling::*[1]/text()" select="current-group()">
-				<xsl:sort select="current-grouping-key()" />
-
 				<xsl:result-document href="{seq:get-href-for-album($artist, current-grouping-key())}" method="text">
 					<xsl:call-template name="album">
 						<xsl:with-param name="current-group" select="current-group()" />
@@ -113,8 +105,6 @@
 					key[. = 'Compilation'] and local-name(key[. = 'Compilation']/following-sibling::*[1]) eq 'true'
 				)
 			]">
-			<xsl:sort select="current-grouping-key()" />
-
 			<xsl:result-document href="{seq:get-href-for-album(current-grouping-key())}" method="text">
 				<xsl:call-template name="album">
 					<xsl:with-param name="current-group" select="current-group()" />
@@ -124,7 +114,7 @@
 	</xsl:template>
 
 	<!-- Album: #EXTM3U -->
-	<xsl:template name="album" match="dict">
+	<xsl:template name="album">
 		<xsl:param name="current-group" />
 
 		<xsl:text>#EXTM3U</xsl:text>
@@ -141,7 +131,7 @@
 	<!-- Album track: #EXTINF -->
 	<xsl:template mode="album-track" match="dict">
 		<xsl:variable name="totalTime" select="floor(number(key[. = 'Total Time']/following-sibling::*[1]/text()) div 1000)" />
-		<xsl:variable name="location" select="url-decoder:decode(key[. = 'Location']/following-sibling::*[1]/text())" />
+		<xsl:variable name="location" select="url-decoder:decode(replace(key[. = 'Location']/following-sibling::*[1]/text(), '[&#43;]', '%2b'))" />
 
 		<xsl:text>#EXTINF:</xsl:text>
 		<xsl:choose>
