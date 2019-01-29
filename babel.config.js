@@ -11,6 +11,14 @@ const presets = [
 ]
 
 const plugins = [
+  'syntax-async-functions',
+  [
+    'module-resolver', {
+      alias: {
+        'itunes-library-parser': './src/js'
+      }
+    }
+  ]
 ]
 
 module.exports = {

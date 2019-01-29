@@ -7,10 +7,8 @@
 	<xsl:import href="../../to-json.xsl" />
 
 	<xsl:template match="/">
-		<xsl:result-document href="iTunes Library/Playlists.json" method="text">
-			<xsl:text>{</xsl:text>
-			<xsl:apply-templates select="plist/dict/key[. = 'Playlists']" />
-			<xsl:text>}</xsl:text>
-		</xsl:result-document>
+		<xsl:text>{</xsl:text>
+		<xsl:apply-templates select="plist/dict/key[. = 'Playlists']" />
+		<xsl:text>}</xsl:text>
 	</xsl:template>
 </xsl:stylesheet>
