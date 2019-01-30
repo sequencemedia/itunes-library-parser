@@ -2,6 +2,8 @@ import {
   exec
 } from 'child_process'
 
+import path from 'path'
+
 import {
   readFile
 } from 'sacred-fs'
@@ -16,17 +18,21 @@ import {
 
 const error = debug('itunes-library-parser:to-json:error')
 
-export const library = (jar, xml, destination = '.itunes-library.json') => (
+const cwd = path.resolve(__dirname, '../../../..')
+const xsl = path.resolve(cwd, 'src/xsl/library/to-json.xsl')
+const DESTINATION = path.resolve(cwd, '.itunes-library.json')
+
+export const parse = (jar, xml, destination = DESTINATION) => (
   new Promise((resolve, reject) => {
-    exec(`java -jar ${jar} -s:"${xml}" -xsl:src/xsl/library/to-json.xsl -o:"${destination}"`, (e) => (!e) ? resolve() : reject(e))
+    exec(`java -jar "${path.resolve(jar)}" -s:"${path.resolve(xml)}" -xsl:"${xsl}" -o:"${destination}"`, { cwd }, (e) => (!e) ? resolve() : reject(e))
   })
 )
 
 const execute = (jar, xml) => (
-  library(jar, xml, '.itunes-library.json')
-    .then(() => readFile('.itunes-library.json'))
+  parse(jar, xml, DESTINATION)
+    .then(() => readFile(DESTINATION))
     .then((fileData) => (
-      del('.itunes-library.json').then(() => fileData)
+      del(DESTINATION, { force: true }).then(() => fileData)
     ))
 )
 

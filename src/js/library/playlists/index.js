@@ -2,17 +2,19 @@ import {
   exec
 } from 'child_process'
 
+import path from 'path'
+
 import {
   clear
 } from 'itunes-library-parser'
 
-export const playlists = (jar, xml) => (
+const cwd = path.resolve(__dirname, '../../../..')
+const xsl = path.resolve(cwd, 'src/xsl/library/playlists.xsl')
+
+export const parse = (jar, xml, destination) => (
   new Promise((resolve, reject) => {
-    exec(`java -jar ${jar} -s:"${xml}" -xsl:src/xsl/library/playlists.xsl`, (e) => (!e) ? resolve() : reject(e))
+    exec(`java -jar "${path.resolve(jar)}" -s:"${path.resolve(xml)}" -xsl:"${xsl}" destination="${destination ? path.resolve(destination) : ''}"`, { cwd }, (e) => (!e) ? resolve() : reject(e))
   })
 )
 
-/**
- *  For watchers
- */
-export const execute = (jar, xml) => clear().then(() => playlists(jar, xml))
+export const toM3U = (jar, xml, destination) => clear().then(() => parse(jar, xml, destination))

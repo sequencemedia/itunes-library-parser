@@ -6,6 +6,8 @@
 	exclude-result-prefixes="xsl seq url-decoder">
 	<xsl:output encoding="UTF-8" method="text" omit-xml-declaration="yes" indent="no" />
 
+	<xsl:param name="destination" />
+
 	<xsl:variable name="tracks" select="/plist/dict/key[. = 'Tracks']/following-sibling::dict" />
 	<xsl:variable name="playlists" select="/plist/dict/key[. = 'Playlists']/following-sibling::array/dict" />
 
@@ -48,13 +50,20 @@
 
 		<xsl:variable name="fileName" select="seq:normalize-for-path($name)" />
 
-		<xsl:text>iTunes Library/Playlists/</xsl:text>
+		<xsl:choose>
+			<xsl:when test="$destination">
+				<xsl:value-of select="$destination" />
+				<xsl:text>/Playlists/</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>iTunes Library/Playlists/</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 
 		<xsl:if test="$filePath">
 			<xsl:value-of select="$filePath" />
 			<xsl:text>/</xsl:text>
 		</xsl:if>
-
 		<xsl:value-of select="$fileName" />
 
 		<xsl:if test="number($position)">

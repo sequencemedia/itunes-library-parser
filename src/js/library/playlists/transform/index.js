@@ -2,6 +2,8 @@ import {
   exec
 } from 'child_process'
 
+import path from 'path'
+
 import {
   readFile
 } from 'sacred-fs'
@@ -16,18 +18,22 @@ import {
 
 const error = debug('itunes-library-parser:to-json:error')
 
-export const playlists = (jar, xml, destination = '.itunes-library/playlists.json') => (
+const cwd = path.resolve(__dirname, '../../../../..')
+const xsl = path.resolve(cwd, 'src/xsl/library/tracks/to-json.xsl')
+const DESTINATION = path.resolve(cwd, '.itunes-library/playlists.json')
+
+export const parse = (jar, xml, destination = DESTINATION) => (
   new Promise((resolve, reject) => {
-    exec(`java -jar ${jar} -s:"${xml}" -xsl:src/xsl/library/playlists/to-json.xsl -o:"${destination}"`, (e) => (!e) ? resolve() : reject(e))
+    exec(`java -jar "${path.resolve(jar)}" -s:"${path.resolve(xml)}" -xsl:"${xsl}" -o:"${destination}"`, { cwd }, (e) => (!e) ? resolve() : reject(e))
   })
 )
 
 const execute = (jar, xml) => (
-  playlists(jar, xml, '.itunes-library/playlists.json')
-    .then(() => readFile('.itunes-library/playlists.json'))
+  parse(jar, xml, DESTINATION)
+    .then(() => readFile(DESTINATION))
     .then((fileData) => (
       new Promise((resolve, reject) => {
-        rimraf('.itunes-library', (e) => (!e) ? resolve(fileData) : reject(e))
+        rimraf(path.resolve(cwd, '.itunes-library'), (e) => (!e) ? resolve(fileData) : reject(e))
       })
     ))
 )

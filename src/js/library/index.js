@@ -2,21 +2,19 @@ import {
   exec
 } from 'child_process'
 
-import rimraf from 'rimraf'
+import {
+  clear
+} from 'itunes-library-parser'
 
-export const clear = () => (
+import path from 'path'
+
+const cwd = path.resolve(__dirname, '../../..')
+const xsl = path.resolve(cwd, 'src/xsl/library.xsl')
+
+export const parse = (jar, xml, destination) => (
   new Promise((resolve, reject) => {
-    rimraf('./iTunes Library/*', (e) => (!e) ? resolve() : reject(e))
+    exec(`java -jar "${path.resolve(jar)}" -s:"${path.resolve(xml)}" -xsl:"${xsl}" destination="${destination ? path.resolve(destination) : ''}"`, { cwd }, (e) => (!e) ? resolve() : reject(e))
   })
 )
 
-export const library = (jar, xml) => (
-  new Promise((resolve, reject) => {
-    exec(`java -jar ${jar} -s:"${xml}" -xsl:src/xsl/library.xsl`, (e) => (!e) ? resolve() : reject(e))
-  })
-)
-
-/**
- *  For watchers
- */
-export const execute = (jar, xml) => clear().then(() => library(jar, xml))
+export const toM3U = (jar, xml, destination) => clear().then(() => parse(jar, xml, destination))

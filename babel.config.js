@@ -11,6 +11,8 @@ const presets = [
 ]
 
 const plugins = [
+  '@babel/proposal-export-default-from',
+  '@babel/proposal-export-namespace-from',
   'syntax-async-functions',
   [
     'module-resolver', {

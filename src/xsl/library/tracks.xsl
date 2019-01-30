@@ -6,6 +6,8 @@
 	exclude-result-prefixes="xsl seq url-decoder">
 	<xsl:output encoding="UTF-8" method="text" omit-xml-declaration="yes" indent="no" />
 
+	<xsl:param name="destination" />
+
 	<xsl:variable name="tracks" select="/plist/dict/key[. = 'Tracks']/following-sibling::dict" />
 
 	<xsl:function name="seq:normalize-for-path">
@@ -23,7 +25,16 @@
 		<xsl:variable name="filePath" select="seq:normalize-for-path($albumArtist)" />
 		<xsl:variable name="fileName" select="seq:normalize-for-path($album)" />
 
-		<xsl:text>iTunes Library/Tracks/</xsl:text>
+		<xsl:choose>
+			<xsl:when test="$destination">
+				<xsl:value-of select="$destination" />
+				<xsl:text>/Tracks/</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>iTunes Library/Tracks/</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+
 		<xsl:value-of select="$filePath" />
 		<xsl:text>/</xsl:text>
 		<xsl:value-of select="$fileName" />
@@ -35,10 +46,18 @@
 
 		<xsl:variable name="fileName" select="seq:normalize-for-path($album)" />
 
-		<xsl:text>iTunes Library/Tracks/Compilations/</xsl:text>
+		<xsl:choose>
+			<xsl:when test="$destination">
+				<xsl:value-of select="$destination" />
+				<xsl:text>/Tracks/Compilations/</xsl:text>
+			</xsl:when>
+
+			<xsl:otherwise>
+				<xsl:text>iTunes Library/Tracks/Compilations/</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 
 		<xsl:value-of select="$fileName" />
-
 		<xsl:text>.m3u8</xsl:text>
 	</xsl:function>
 
