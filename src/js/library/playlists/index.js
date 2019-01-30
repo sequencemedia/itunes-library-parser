@@ -6,7 +6,7 @@ import path from 'path'
 
 import {
   clear
-} from 'itunes-library-parser'
+} from '~'
 
 const cwd = path.resolve(__dirname, '../../../..')
 const xsl = path.resolve(cwd, 'src/xsl/library/playlists.xsl')

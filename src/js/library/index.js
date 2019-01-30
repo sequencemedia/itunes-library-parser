@@ -4,7 +4,7 @@ import {
 
 import {
   clear
-} from 'itunes-library-parser'
+} from '~'
 
 import path from 'path'
 

@@ -14,7 +14,7 @@ import debug from 'debug'
 
 import {
   transform
-} from 'itunes-library-parser/transform'
+} from '~/transform'
 
 const error = debug('itunes-library-parser:to-json:error')
 
