@@ -18,3 +18,5 @@ export const parse = (jar, xml, destination) => (
 )
 
 export const toM3U = (jar, xml, destination) => clear().then(() => parse(jar, xml, destination))
+
+export * as transform from './transform'
