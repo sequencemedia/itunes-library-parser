@@ -14,5 +14,5 @@
 # Execution
 bin
 
-# Babel
-# lib
+# Build
+lib

@@ -1,8 +1,9 @@
+import path from 'path'
 import rimraf from 'rimraf'
 
-export const clear = () => (
+export const clear = (destination = './iTunes Library') => (
   new Promise((resolve, reject) => {
-    rimraf('./iTunes Library/*', (e) => (!e) ? resolve() : reject(e))
+    rimraf(`${path.resolve(destination)}/*`, (e) => (!e) ? resolve() : reject(e))
   })
 )
 
