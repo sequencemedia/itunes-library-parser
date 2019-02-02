@@ -12,6 +12,9 @@
 /iTunes Library
 !package.json
 
+# Production
+.npmrc
+
 # Execution
 bin
 
