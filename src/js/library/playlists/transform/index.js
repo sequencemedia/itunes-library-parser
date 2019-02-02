@@ -43,8 +43,8 @@ export const toJSON = async (jar, xml) => {
     const fileData = await execute(jar, xml)
 
     return fileData.toString('utf8')
-  } catch (e) {
-    error(e)
+  } catch ({ message }) {
+    error(message)
 
     throw new Error('Failed to process XML to JSON')
   }
@@ -53,8 +53,8 @@ export const toJSON = async (jar, xml) => {
 export const toJS = async (jar, xml) => {
   try {
     return JSON.parse(await toJSON(jar, xml))
-  } catch (e) {
-    error(e)
+  } catch ({ message }) {
+    error(message)
 
     throw new Error('Failed to process XML to JS')
   }
@@ -63,8 +63,8 @@ export const toJS = async (jar, xml) => {
 export const toES = async (jar, xml) => {
   try {
     return transform(JSON.parse(await toJSON(jar, xml)))
-  } catch (e) {
-    error(e)
+  } catch ({ message }) {
+    error(message)
 
     throw new Error('Failed to process XML to ES')
   }
