@@ -27,7 +27,7 @@ export const toM3U = async (jar, xml, destination) => {
     await clear(destination)
     await parse(jar, xml, destination)
 
-    log(`Succeeded parsing ${xml}`)
+    log(`Succeeded parsing "${xml}"`)
   } catch ({ code, message }) {
     if (code === 2) {
       error('I/O error in Saxon. Sitting this one out')
