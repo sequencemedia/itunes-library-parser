@@ -4,9 +4,14 @@ import {
 
 import path from 'path'
 
+import debug from 'debug'
+
 import {
   clear
 } from '~'
+
+const error = debug('itunes-library-parser:to-m3u:error')
+const log = debug('itunes-library-parser:to-m3u:log')
 
 const cwd = path.resolve(__dirname, '../../../..')
 const xsl = path.resolve(cwd, 'src/xsl/library/tracks.xsl')
@@ -17,6 +22,19 @@ export const parse = (jar, xml, destination = './iTunes Library') => (
   })
 )
 
-export const toM3U = (jar, xml, destination) => clear().then(() => parse(jar, xml, destination))
+export const toM3U = async (jar, xml, destination) => {
+  try {
+    await clear(destination)
+    await parse(jar, xml, destination)
+
+    log(`Succeeded parsing ${xml}`)
+  } catch ({ code, message }) {
+    if (code === 2) {
+      error('I/O error in Saxon. Sitting this one out')
+    } else {
+      error(message)
+    }
+  }
+}
 
 export * as transform from './transform'
