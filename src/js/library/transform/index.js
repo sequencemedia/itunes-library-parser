@@ -8,8 +8,6 @@ import {
   readFile
 } from 'sacred-fs'
 
-import del from 'del'
-
 import debug from 'debug'
 
 import {
@@ -22,6 +20,9 @@ const cwd = path.resolve(__dirname, '../../../..')
 const xsl = path.resolve(cwd, 'src/xsl/library/to-json.xsl')
 const DESTINATION = path.resolve(cwd, '.itunes-library.json')
 
+/**
+ *  `maxBuffer`
+ */
 export const parse = (jar, xml, destination = DESTINATION) => (
   new Promise((resolve, reject) => {
     exec(`java -jar "${path.resolve(jar)}" -s:"${path.resolve(xml)}" -xsl:"${xsl}" -o:"${destination}"`, { cwd }, (e) => (!e) ? resolve() : reject(e))
@@ -31,9 +32,6 @@ export const parse = (jar, xml, destination = DESTINATION) => (
 const execute = (jar, xml) => (
   parse(jar, xml, DESTINATION)
     .then(() => readFile(DESTINATION))
-    .then((fileData) => (
-      del(DESTINATION, { force: true }).then(() => fileData)
-    ))
 )
 
 export const toJSON = async (jar, xml) => {

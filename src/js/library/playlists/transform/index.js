@@ -8,8 +8,6 @@ import {
   readFile
 } from 'sacred-fs'
 
-import rimraf from 'rimraf'
-
 import debug from 'debug'
 
 import {
@@ -22,6 +20,9 @@ const cwd = path.resolve(__dirname, '../../../../..')
 const xsl = path.resolve(cwd, 'src/xsl/library/tracks/to-json.xsl')
 const DESTINATION = path.resolve(cwd, '.itunes-library/playlists.json')
 
+/**
+ *  `maxBuffer`
+ */
 export const parse = (jar, xml, destination = DESTINATION) => (
   new Promise((resolve, reject) => {
     exec(`java -jar "${path.resolve(jar)}" -s:"${path.resolve(xml)}" -xsl:"${xsl}" -o:"${destination}"`, { cwd }, (e) => (!e) ? resolve() : reject(e))
@@ -31,11 +32,6 @@ export const parse = (jar, xml, destination = DESTINATION) => (
 const execute = (jar, xml) => (
   parse(jar, xml, DESTINATION)
     .then(() => readFile(DESTINATION))
-    .then((fileData) => (
-      new Promise((resolve, reject) => {
-        rimraf(path.resolve(cwd, '.itunes-library'), (e) => (!e) ? resolve(fileData) : reject(e))
-      })
-    ))
 )
 
 export const toJSON = async (jar, xml) => {
@@ -68,4 +64,10 @@ export const toES = async (jar, xml) => {
 
     throw new Error('Failed to process XML to ES')
   }
+}
+
+export default {
+  toJSON,
+  toJS,
+  toES
 }
