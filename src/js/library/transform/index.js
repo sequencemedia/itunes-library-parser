@@ -29,12 +29,9 @@ export const parse = (jar, xml, destination = DESTINATION) => (
   })
 )
 
-const execute = (jar, xml) => (
-  parse(jar, xml, DESTINATION)
-    .then(() => readFile(DESTINATION))
-)
+const execute = (jar, xml) => parse(jar, xml, DESTINATION).then(() => readFile(DESTINATION))
 
-export const toJSON = async (jar, xml) => {
+export async function toJSON (jar, xml) {
   try {
     const fileData = await execute(jar, xml)
 
@@ -46,7 +43,7 @@ export const toJSON = async (jar, xml) => {
   }
 }
 
-export const toJS = async (jar, xml) => {
+export async function toJS (jar, xml) {
   try {
     return JSON.parse(await toJSON(jar, xml))
   } catch ({ message }) {
@@ -56,7 +53,7 @@ export const toJS = async (jar, xml) => {
   }
 }
 
-export const toES = async (jar, xml) => {
+export async function toES (jar, xml) {
   try {
     return transform(JSON.parse(await toJSON(jar, xml)))
   } catch ({ message }) {

@@ -22,12 +22,12 @@ export const parse = (jar, xml, destination = './iTunes Library') => (
   })
 )
 
-export const toM3U = async (jar, xml, destination) => {
+export async function toM3U (jar, xml, destination) {
   try {
     await clear(destination)
     await parse(jar, xml, destination)
 
-    log(`Succeeded parsing ${xml}`)
+    log(`Succeeded parsing "${xml}"`)
   } catch ({ code, ...e }) {
     if (code === 2) {
       error('I/O error in Saxon')

@@ -22,7 +22,7 @@ export const parse = (jar, xml, destination = './iTunes Library') => (
   })
 )
 
-export const toM3U = async (jar, xml, destination) => {
+export async function toM3U (jar, xml, destination) {
   try {
     await clear(destination)
     await parse(jar, xml, destination)
