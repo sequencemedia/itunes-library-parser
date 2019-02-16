@@ -28,7 +28,7 @@ export const parse = (jar, xml, destination = './iTunes Library') => (
 export async function toM3U (jar, xml, destination) {
   try {
     /**
-     *  Permit only one set of values in the queue
+     *  Ignore these values if they are duplicates of some in the queue
      */
     if (!queue.some(({ jar: j, xml: x, destination: d }) => (
       j === jar &&
@@ -36,11 +36,11 @@ export async function toM3U (jar, xml, destination) {
       d === destination)
     )) {
       /**
-       *  Something is parsing, so
+       *  These values are unique, so
        */
       if (immediate) {
         /**
-         *  En-queue the values
+         *  XML is being parsed. En-queue these values
          */
         queue.push({ jar, xml, destination })
         /**
@@ -55,11 +55,11 @@ export async function toM3U (jar, xml, destination) {
          */
       } else {
         /**
-         *  Nothing is parsing, so
+         *  XML is not being parsed
          */
         immediate = setImmediate(async () => {
           /**
-           *  Parse the values
+           *  Parse these values immediately
            */
           await clear(destination)
           await parse(jar, xml, destination)
@@ -70,7 +70,7 @@ export async function toM3U (jar, xml, destination) {
 
           if (queue.length) {
             /**
-             *  De-queue the values
+             *  The queue is not empty. De-queue some values
              */
 
             const {
@@ -79,6 +79,9 @@ export async function toM3U (jar, xml, destination) {
               destination: d
             } = queue.shift()
 
+            /**
+             *  Repeat
+             */
             return toM3U(j, x, d)
           }
         })
