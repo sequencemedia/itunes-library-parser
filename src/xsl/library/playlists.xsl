@@ -15,7 +15,7 @@
 		<xsl:param name="s" />
 
 		<xsl:value-of
-			select="normalize-space(translate(translate(replace(normalize-unicode($s, 'NFD'), '[&quot;%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x0301;&#x0308;&#x0313;&#x0314;&#x0342;&#x0345;', ''))"
+			select="normalize-space(translate(translate(replace(normalize-unicode($s, 'NFD'), '[&quot;%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x30c;&#x0301;&#x0308;&#x0313;&#x0314;&#x32c;&#x0342;&#x0345;', ''))"
 		/>
 	</xsl:function>
 
