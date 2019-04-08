@@ -10,11 +10,28 @@
 
 	<xsl:variable name="tracks" select="/plist/dict/key[. = 'Tracks']/following-sibling::dict" />
 
+	<!-- https://en.wikipedia.org/wiki/Combining_character -->
+	<xsl:function name="seq:remove-combining-characters">
+		<xsl:param name="s" />
+
+		<xsl:value-of
+			select="
+				translate(translate(translate(translate(translate(translate(translate($s,
+					'&#x0300;&#x301;&#x0302;&#x0303;&#x0304;&#x0305;&#x306;&#x0307;&#x0308;&#x0309;&#x030A;&#x030B;&#x030C;&#x030D;&#x030E;&#x030F;', ''),
+					'&#x0310;&#x311;&#x0312;&#x0313;&#x0314;&#x0315;&#x316;&#x0317;&#x0318;&#x0319;&#x031A;&#x031B;&#x031C;&#x031D;&#x031E;&#x031F;', ''),
+					'&#x0320;&#x321;&#x0322;&#x0323;&#x0324;&#x0325;&#x326;&#x0327;&#x0328;&#x0329;&#x032A;&#x032B;&#x032C;&#x032D;&#x032E;&#x032F;', ''),
+					'&#x0330;&#x331;&#x0332;&#x0333;&#x0334;&#x0335;&#x336;&#x0337;&#x0338;&#x0339;&#x033A;&#x033B;&#x033C;&#x033D;&#x033E;&#x033F;', ''),
+					'&#x0340;&#x341;&#x0342;&#x0343;&#x0344;&#x0345;&#x346;&#x0347;&#x0348;&#x0349;&#x034A;&#x034B;&#x034C;&#x034D;&#x034E;&#x034F;', ''),
+					'&#x0350;&#x351;&#x0352;&#x0353;&#x0354;&#x0355;&#x356;&#x0357;&#x0358;&#x0359;&#x035A;&#x035B;&#x035C;&#x035D;&#x035E;&#x035F;', ''),
+					'&#x0360;&#x361;&#x0362;&#x0363;&#x0364;&#x0365;&#x366;&#x0367;&#x0368;&#x0369;&#x036A;&#x036B;&#x036C;&#x036D;&#x036E;&#x036F;', '')"
+		/>
+	</xsl:function>
+
 	<xsl:function name="seq:normalize-for-path">
 		<xsl:param name="s" />
 
 		<xsl:value-of
-			select="normalize-space(translate(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___'), '&#x0300;&#x30c;&#x0301;&#x0308;&#x0313;&#x0314;&#x32c;&#x0342;&#x0345;', ''))"
+			select="normalize-space(seq:remove-combining-characters(translate(replace(normalize-unicode($s, 'NFD'), '[%\[\]*?]', '_'), '\/:', '___')))"
 		/>
 	</xsl:function>
 
