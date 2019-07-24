@@ -1,7 +1,7 @@
 {
   "name": "@sequencemedia/itunes-library-parser",
   "description": "Parse iTunes Library XML files to JSON or M3U",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "index.js",
   "scripts": {
     "babel": "babel src -d lib",
