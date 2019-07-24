@@ -1,6 +1,6 @@
 export const transformObjectToMap = (o, m) => {
   Object.entries(o)
-    .forEach(([ key, value ] = []) => {
+    .forEach(([key, value] = []) => {
       switch ((value || false).constructor) {
         case Object:
           m.set(key, transformObjectToMap(value, new Map()))
