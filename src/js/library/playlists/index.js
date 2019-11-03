@@ -26,42 +26,45 @@ export const parse = (jar, xml, destination = './iTunes Library') => (
 )
 
 export async function toM3U (jar, xml, destination) {
-  try {
-    /**
-     *  Ignore these values if they are duplicates of some in the queue
-     */
-    if (!queue.some(({ jar: j, xml: x, destination: d }) => (
-      j === jar &&
+  /**
+   *  Ignore these values if they are duplicates of some in the queue
+   */
+  if (!queue.some(({ jar: j, xml: x, destination: d }) => (
+    j === jar &&
       x === xml &&
       d === destination)
-    )) {
+  )) {
+    /**
+     *  These values are unique, so
+     */
+    if (immediate) {
       /**
-       *  These values are unique, so
+       *  XML is being parsed. En-queue these values
        */
-      if (immediate) {
-        /**
-         *  XML is being parsed. En-queue these values
-         */
-        queue.push({ jar, xml, destination })
-        /**
-         *  (... if the XML changes while it's being parsed
-         *  it should be parsed again immediately after,
-         *  so the second of two identical calls will be
-         *  put into the queue while the first is executing
-         *
-         *  In other words: the first call isn't put into the
-         *  queue in order to allow that second call to be
-         *  put into the queue!)
-         */
-      } else {
-        /**
-         *  XML is not being parsed
-         */
-        immediate = setImmediate(async () => {
+      queue.push({ jar, xml, destination })
+      /**
+       *  (... if the XML changes while it's being parsed
+       *  it should be parsed again immediately after,
+       *  so the second of two identical calls will be
+       *  put into the queue while the first is executing
+       *
+       *  In other words: the first call isn't put into the
+       *  queue in order to allow that second call to be
+       *  put into the queue!)
+       */
+    } else {
+      /**
+       *  XML is not being parsed
+       */
+      immediate = setImmediate(async () => {
+        try {
+          /**
+           *  Clear the destination directory
+           */
+          await clear(destination)
           /**
            *  Parse these values immediately
            */
-          await clear(destination)
           await parse(jar, xml, destination)
 
           log(`Succeeded parsing "${xml}"`)
@@ -72,7 +75,6 @@ export async function toM3U (jar, xml, destination) {
             /**
              *  The queue is not empty. De-queue some values
              */
-
             const {
               jar: j,
               xml: x,
@@ -84,19 +86,23 @@ export async function toM3U (jar, xml, destination) {
              */
             return toM3U(j, x, d)
           }
-        })
-      }
-    }
-    return immediate
-  } catch ({ code, ...e }) {
-    if (code === 2) {
-      error('I/O error in Saxon')
-    } else {
-      const {
-        message
-      } = e
 
-      error(message)
+          /**
+           *  Return handle from `setImmediate` or null
+           */
+          return immediate
+        } catch ({ code, ...e }) {
+          if (code === 2) {
+            error('I/O error in Saxon')
+          } else {
+            const {
+              message
+            } = e
+
+            error(message)
+          }
+        }
+      })
     }
   }
 }
