@@ -3,6 +3,9 @@
 **/node_modules/**/*
 **/npm-debug.log
 
+# NPM
+.npmrc
+.npmignore
+
 .editorconfig
 .eslintignore
-.eslintrc
