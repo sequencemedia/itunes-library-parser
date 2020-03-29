@@ -92,15 +92,16 @@ export async function toM3U (jar, xml, destination) {
            *  Return handle from `setImmediate` or null
            */
           return immediate
-        } catch ({ code, ...e }) {
+        } catch (e) {
+          const { code } = e
           if (code === 2) {
-            error('I/O error in Saxon')
+            error('I/O error in Saxon', e)
           } else {
             const {
-              message
+              message = 'No error message defined'
             } = e
 
-            error(message)
+            error(message, e)
           }
         }
       })
