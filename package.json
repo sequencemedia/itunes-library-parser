@@ -1,28 +1,7 @@
 {
   "name": "@sequencemedia/itunes-library-parser",
-  "description": "Parse iTunes Library XML files to JSON or M3U",
   "version": "0.1.15",
-  "main": "index.js",
-  "scripts": {
-    "babel": "babel src -d lib",
-    "lint": "eslint *.js src",
-    "lint:fix": "npm run lint -- --fix",
-    "start": "cross-env DEBUG=itunes-library-parser* NODE_ENV=production node index",
-    "start:dev": "cross-env DEBUG=itunes-library-parser*,-babel* NODE_ENV=development node index",
-    "build": "npm run babel",
-    "prepublishOnly": "npm run build",
-    "prepare": "npm run build"
-  },
-  "author": "Jonathan Perry <sequencemedia@sequencemedia.net>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/sequencemedia/itunes-library-parser"
-  },
-  "bugs": {
-    "url": "https://github.com/sequencemedia/itunes-library-parser/issues"
-  },
-  "homepage": "https://github.com/sequencemedia/itunes-library-parser",
+  "description": "Parse iTunes Library XML files to JSON or M3U",
   "keywords": [
     "itunes",
     "library",
@@ -37,6 +16,37 @@
     "m3u",
     "m3u8"
   ],
+  "main": "./index.js",
+  "author": "Jonathan Perry for Sequence Media Limited <sequencemedia@sequencemedia.net>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sequencemedia/itunes-library-parser"
+  },
+  "homepage": "https://github.com/sequencemedia/itunes-library-parser",
+  "bugs": {
+    "url": "https://github.com/sequencemedia/itunes-library-parser/issues"
+  },
+  "scripts": {
+    "babel": "babel src -d lib",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "start": "cross-env DEBUG=itunes-library-parser* NODE_ENV=production node index",
+    "start:dev": "cross-env DEBUG=itunes-library-parser* NODE_ENV=development node index",
+    "build": "npm run babel",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.2",
+    "debug": "^4.1.1",
+    "del": "^5.1.0",
+    "rimraf": "^3.0.2",
+    "sacred-fs": "^1.0.15",
+    "supports-color": "^7.1.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.10.3",
     "@babel/core": "^7.10.3",
@@ -56,13 +66,5 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
-  },
-  "dependencies": {
-    "cross-env": "^7.0.2",
-    "debug": "^4.1.1",
-    "del": "^5.1.0",
-    "rimraf": "^3.0.2",
-    "sacred-fs": "^1.0.15",
-    "supports-color": "^7.1.0"
   }
 }
