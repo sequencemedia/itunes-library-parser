@@ -1,26 +1,9 @@
 version: 2.1
-orbs:
-  node: circleci/node@1.1.6
+
 jobs:
-  test:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - run:
-          name: Authenticate with NPM
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - node/with-cache:
-          steps:
-            - run:
-                name: Install
-                command: npm install
-            - run:
-                name: Test
-                command: npm test
-  publish:
-    executor:
-      name: node/default
+  lint_and_test:
+    docker:
+      - image: circleci/node:lts
     steps:
       - checkout
       - run:
@@ -28,30 +11,58 @@ jobs:
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Install
-          command: npm install
+          command: npm ci
       - run:
-          name: Publish package to NPM
+          name: Lint
+          command: npm run lint
+      - run:
+          name: Test
+          command: npm run test
+  publish:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Publish to NPM
           command: |
             set -e
 
-            NAME=$(node -p "require('./package.json').name")
-            VERSION=$(node -p "require('./package.json').version")
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+
+            PATTERN="([0-9]+)\.([0-9]+)\.([0-9]+)"
+            NAME=$(node -p "require('./package').name")
+            VERSION=$(node -p "require('./package').version")
             PUBLISHED_VERSION=$(npm view $NAME version)
 
-            if [ "$VERSION" != "$PUBLISHED_VERSION" ]
+            [[ $VERSION =~ $PATTERN ]]
+
+            VERSION_MAJOR="${BASH_REMATCH[1]}"
+            VERSION_MINOR="${BASH_REMATCH[2]}"
+            VERSION_PATCH="${BASH_REMATCH[3]}"
+
+            [[ $PUBLISHED_VERSION =~ $PATTERN ]]
+
+            PUBLISHED_VERSION_MAJOR="${BASH_REMATCH[1]}"
+            PUBLISHED_VERSION_MINOR="${BASH_REMATCH[2]}"
+            PUBLISHED_VERSION_PATCH="${BASH_REMATCH[3]}"
+
+            if [ $VERSION_MAJOR -gt $PUBLISHED_VERSION_MAJOR ] || [ $VERSION_MINOR -gt $PUBLISHED_VERSION_MINOR ] || [ $VERSION_PATCH -gt $PUBLISHED_VERSION_PATCH ]
             then
+              npm ci
               npm publish
             fi
 
 workflows:
-    test-and-publish:
-      jobs:
-        - test
-        - publish:
-            requires:
-              - test
-            filters:
-              tags:
-                only: /^v.*/
-              branches:
-                only: master
+  version: 2
+  commit-workflow:
+    jobs:
+      - lint_and_test
+      - publish:
+          requires:
+            - lint_and_test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: master
