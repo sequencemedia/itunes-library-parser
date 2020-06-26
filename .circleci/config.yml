@@ -1,23 +1,6 @@
 version: 2.1
 
 jobs:
-  lint_and_test:
-    docker:
-      - image: circleci/node:lts
-    steps:
-      - checkout
-      - run:
-          name: Authenticate with NPM
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run:
-          name: Install
-          command: npm ci
-      - run:
-          name: Lint
-          command: npm run lint
-      - run:
-          name: Test
-          command: npm run test
   publish:
     docker:
       - image: circleci/node:lts
@@ -34,6 +17,9 @@ jobs:
             NAME=$(node -p "require('./package').name")
             VERSION=$(node -p "require('./package').version")
             PUBLISHED_VERSION=$(npm view $NAME version)
+
+            echo Version is $VERSION
+            echo Published version is $PUBLISHED_VERSION
 
             [[ $VERSION =~ $PATTERN ]]
 
@@ -57,10 +43,7 @@ workflows:
   version: 2
   commit-workflow:
     jobs:
-      - lint_and_test
       - publish:
-          requires:
-            - lint_and_test
           filters:
             tags:
               only: /^v.*/
