@@ -12,11 +12,14 @@
 /iTunes Library
 !package.json
 
-# Production
-.npmrc
-
 # Execution
 bin
 
 # Build
 # lib
+
+# User-defined NPM configuration
+.npmrc
+
+# User-defined NVM configuration
+.nvmrc
