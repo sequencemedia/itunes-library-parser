@@ -44,7 +44,7 @@
     "debug": "^4.1.1",
     "del": "^5.1.0",
     "rimraf": "^3.0.2",
-    "sacred-fs": "^1.0.17",
+    "sacred-fs": "^1.0.18",
     "supports-color": "^7.1.0"
   },
   "devDependencies": {
