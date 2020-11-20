@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "cross-env": "^7.0.2",
-    "debug": "^4.2.0",
+    "debug": "^4.3.1",
     "del": "^6.0.0",
     "rimraf": "^3.0.2",
     "sacred-fs": "^1.2.1",
