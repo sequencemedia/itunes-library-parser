@@ -10,7 +10,9 @@
 *.m3u8
 *.m3u
 /iTunes Library
+
 !package.json
+!package-lock.json
 
 # Execution
 bin
