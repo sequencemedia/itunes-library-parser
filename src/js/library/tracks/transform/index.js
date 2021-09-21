@@ -6,7 +6,7 @@ import path from 'path'
 
 import {
   readFile
-} from 'sacred-fs'
+} from 'fs/promises'
 
 import debug from 'debug'
 
@@ -29,7 +29,7 @@ export const parse = (jar, xml, destination = DESTINATION) => (
   })
 )
 
-const execute = (jar, xml) => parse(jar, xml, DESTINATION).then(() => readFile(DESTINATION))
+const execute = (jar, xml) => parse(jar, xml, DESTINATION).then(() => readFile(DESTINATION, 'utf8'))
 
 export async function toJSON (jar, xml) {
   try {
