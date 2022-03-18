@@ -42,7 +42,7 @@
   "dependencies": {
     "@babel/runtime": "^7.17.7",
     "cross-env": "^7.0.3",
-    "debug": "^4.3.3",
+    "debug": "^4.3.4",
     "rimraf": "^3.0.2",
     "supports-color": "^9.2.1"
   },
