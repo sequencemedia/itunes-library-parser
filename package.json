@@ -44,7 +44,7 @@
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "rimraf": "^3.0.2",
-    "supports-color": "8.1.1"
+    "supports-color": "9.2.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
