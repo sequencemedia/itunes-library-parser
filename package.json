@@ -40,7 +40,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@babel/runtime": "^7.20.1",
+    "@babel/runtime": "^7.20.6",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "rimraf": "^3.0.2",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.20.5",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/plugin-proposal-export-default-from": "^7.18.10",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
